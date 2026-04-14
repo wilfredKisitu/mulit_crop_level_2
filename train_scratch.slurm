@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "=== Job started on $(hostname) at $(date) ==="
 
 source ~/.bashrc
