@@ -174,14 +174,15 @@ if __name__ == "__main__":
         TRAIN_PATH = os.path.join(ROOT_PATH, 'train-V')
         VAL_PATH = os.path.join(ROOT_PATH, 'test-V')
         TEST_PATH = os.path.join(ROOT_PATH, 'testing7')
+        BATACH_SIZE = 32
 
         print(TRAIN_PATH, VAL_PATH, TEST_PATH, sep='\n')
         
         dataset = PlantDataset(TRAIN_PATH, is_test=False)
-        dataloader = PlantDataLoader(dataset, batch_size=128, random=True)
+        dataloader = PlantDataLoader(dataset, batch_size=BATACH_SIZE, random=True)
 
         val_dataset = PlantDataset(VAL_PATH, is_test=False)
-        val_dataloader = PlantDataLoader(val_dataset, batch_size=128)
+        val_dataloader = PlantDataLoader(val_dataset, batch_size=BATACH_SIZE)
 
         num_plants, num_diseases = len(dataset.crop_types), len(dataset.disease_types)
 
