@@ -3,6 +3,7 @@ import torch
 from abc import ABC, abstractmethod
 from PIL import Image
 from torchvision import transforms
+from collections import Counter
 
 
 _IMAGENET_MEAN = [0.485, 0.456, 0.406]
@@ -30,6 +31,9 @@ class PlantDataset(Dataset):
         self.crop_types = []
         self.disease_types = []
         self._load_directories()
+        self._get_crop_disease_dict()
+        self._get_disease_per_crop_count()
+
         
 
     def _load_directories(self):
@@ -52,6 +56,35 @@ class PlantDataset(Dataset):
                         self.crop_types.append(plant_type)
                     if disease_type not in self.disease_types:
                         self.disease_types.append(disease_type)
+
+    def _get_crop_disease_dict(self):
+        """Builds a state of crops with their respective diseases"""
+        crop_disease_dict = dict()
+        for crop in self.crop_types:
+            crop_disease_dict[crop] = list()
+        
+        for disease in self.disease_types:
+            disease = disease.lower()
+            _crop_index = self.crop_types.index(disease.split('_')[0])
+            _crop_key = self.crop_types[_crop_index]
+            crop_disease_dict[_crop_key].append(disease)
+        
+        self.crop_disease_dict = crop_disease_dict
+
+    
+    def _get_disease_per_crop_count(self):
+        disease_per_crop_counter = Counter({crop: len(disease) for crop, disease in self.crop_disease_dict.items()})
+        
+        self.disease_per_crop_counter = disease_per_crop_counter
+
+    def get_disease_per_crop(self):
+        """Returns diseases per crop"""
+        return self.crop_disease_dict
+    
+    def get_disease_per_crop_count(self):
+        """Return number of diseases per crop"""
+        return self.disease_per_crop_counter
+        
 
     def get_label(self, image_path):
         plant_type, disease_type = None, None
@@ -99,9 +132,18 @@ if __name__ == "__main__":
 
     print(f'Length of Dataset: {len(dataset)}')
     x, y_c, y_d = dataset[20]
+    num_of_crops = len(dataset.crop_types)
+    num_of_diseases = len(dataset.disease_types)
+
+
     print(f'Image shape: {x.shape}')
     print(f'Plant type: {y_c}')
     print(f'Disease category: {y_d}')
+    print(f'Num of crops: {num_of_crops}')
+    print(f'Number of diseases: {num_of_diseases}')
+    print(f"=="*50)
+    print(f'Disease per crop count: \n {dataset.get_disease_per_crop()}')
+    print(f'Diseases per crop: {dataset.get_disease_per_crop_count()}')
 
 
 

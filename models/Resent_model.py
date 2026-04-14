@@ -7,9 +7,11 @@ from models.Residual_Block import ResidualBlock
 
 class Resnet(nn.Module):
 
-    def __init__(self, num_plants, num_diseases):
-        """Implementation of the custom Resnet for model training"""
+    def __init__(self, num_plants, num_diseases, return_features = False):
+        """Custom resnet model which servers as a flat classifer and feature extractor for the hierarchical model pipeline"""
+
         super(Resnet, self).__init__()
+        self.return_features = return_features
 
         # Block A 
         self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1)
@@ -45,6 +47,10 @@ class Resnet(nn.Module):
         out = F.adaptive_avg_pool2d(out, (1, 1))
         out = out.view(out.size(0), -1)
 
+        if self.return_features:
+            """Returns features for hierarchical model"""
+            return out
+
         plant_out = self.plant_head(out)
         disease_out = self.disease_head(out)
         return plant_out, disease_out
@@ -59,10 +65,15 @@ if __name__ == "__main__":
     with torch.no_grad():
         p_t, p_d = model(x)
 
+    hier_backborn = Resnet(num_plants=5, num_diseases=38, return_features=True)
+    features = hier_backborn(x)
+
+
     os.system('clear')
     print(f'Input shape: {x.shape}')
     print(f'Plant type shape: {p_t.shape}')
     print(f'Disease type shape: {p_d.shape}')
+    print(f'Feature shape for hierarchical model: {features.shape}')
     
     
 
