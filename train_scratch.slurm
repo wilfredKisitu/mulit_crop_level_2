@@ -1,13 +1,13 @@
-echo "=== Job started on $(hostname) at $(data) ===="
+echo "=== Job started on $(hostname) at $(date) ==="
 
 source ~/.bashrc
 conda activate dev-multicrop
 
-echo "Conda environment $CONDA_DEFAULT_ENV"
+echo "Conda environment: $CONDA_DEFAULT_ENV"
 echo "Python path: $(which python)"
 
-cd /home/nalwangar/wilfred/multi_crop_level_2
+cd /home/nalwangar/wilfred/mulit_crop_level_2
 
 python -m model_train.train
 
-echo "=== Jon finised at $(data) ==="
+echo "=== Job finished at $(date) ==="
