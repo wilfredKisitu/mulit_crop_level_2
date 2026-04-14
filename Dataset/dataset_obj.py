@@ -123,10 +123,9 @@ class PlantDataset(Dataset):
 
 if __name__ == "__main__":
     import os
-
-    TRAIN_PATH = '/deepstore/datasets/dmb/ComputerVision/biology/train-V'
-    TEST_PATH = '/deepstore/datasets/dmb/ComputerVision/biology/testmee'
-    dataset = PlantDataset(TEST_PATH, is_test=True)
+    from configs.project_dirs import TRAIN_PATH, TEST_PATH
+    
+    dataset = PlantDataset(TRAIN_PATH, is_test=False)
     os.system('clear')
 
     print(f'Length of Dataset: {len(dataset)}')
@@ -141,8 +140,10 @@ if __name__ == "__main__":
     print(f'Num of crops: {num_of_crops}')
     print(f'Number of diseases: {num_of_diseases}')
     print(f"=="*50)
-    print(f'Disease per crop count: \n {dataset.get_disease_per_crop()}')
-    print(f'Diseases per crop: {dataset.get_disease_per_crop_count()}')
+    # print(f'Disease per crop count: \n {dataset.get_disease_per_crop()}')
+    # print(f'Diseases per crop: {dataset.get_disease_per_crop_count()}')
+    print(f'Crops:\n {dataset.crop_types}')
+    print(f'Diseases: \n {dataset.disease_types}')
 
 
 
