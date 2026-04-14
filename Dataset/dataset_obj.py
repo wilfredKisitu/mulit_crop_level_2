@@ -91,9 +91,9 @@ class PlantDataset(Dataset):
         path_splits= image_path.split('/')
 
         if self.is_test:
-            plant_type, disease_type = path_splits[3], path_splits[-2]
+            plant_type, disease_type = path_splits[-4], path_splits[-3]
         else:
-            plant_type, disease_type = path_splits[2], path_splits[3]
+            plant_type, disease_type = path_splits[-3], path_splits[-2]
         return plant_type, disease_type
 
 
