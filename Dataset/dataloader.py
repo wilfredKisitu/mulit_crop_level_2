@@ -1,5 +1,6 @@
 import random
 import torch
+from math import ceil
 from abc import ABC
 import numpy as np
 from Dataset.dataset_obj import PlantDataset
@@ -20,6 +21,10 @@ class PlantDataLoader(DataLoader):
         self.dataset = dataset
         self.batch_size = batch_size
         self.random = random
+
+
+    def __len__(self):
+        return ceil(len(self.dataset) / self.batch_size)
 
     
     def __iter__(self):
@@ -54,7 +59,7 @@ if __name__ == '__main__':
     import os
 
     dataset = PlantDataset('./train-V', is_test=False)
-    dataloader  =PlantDataLoader(dataset, batch_size=3, random=True)
+    dataloader  =PlantDataLoader(dataset, batch_size=64, random=True)
 
     data_iter = iter(dataloader)
     x, y_c, y_d = next(data_iter)
@@ -63,6 +68,7 @@ if __name__ == '__main__':
     print(f'Batched data shape: {x.shape}')
     print(f'Batched labels shape: {y_c.shape}') 
     print(f'Y lables: {y_d.shape}')
+    print(f'Lenght of dataloader: {len(dataloader)}')
 
                 
 

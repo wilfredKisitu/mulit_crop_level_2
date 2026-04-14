@@ -165,7 +165,7 @@ def train(model, train_loader, val_loader, optimizer, loss_fn, device, epochs= 1
 logging.basicConfig(
     filename="training.log",
     level = logging.INFO,
-    format= "%(asctime)s - %(levelnames)s - %(message)s"
+    format= "%(asctime)s - %(levelname)s - %(message)s"
 )
 
 if __name__ == "__main__":
@@ -174,7 +174,7 @@ if __name__ == "__main__":
         TRAIN_PATH = os.path.join(ROOT_PATH, 'train-V')
         VAL_PATH = os.path.join(ROOT_PATH, 'test-V')
         TEST_PATH = os.path.join(ROOT_PATH, 'testing7')
-        BATACH_SIZE = 32
+        BATACH_SIZE = 64
 
         print(TRAIN_PATH, VAL_PATH, TEST_PATH, sep='\n')
         
@@ -201,3 +201,5 @@ if __name__ == "__main__":
 
         print('Error occurred. Check training.log')
         raise
+
+# UPDATE THE MODEL TO 100 EPOCHS
