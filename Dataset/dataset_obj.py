@@ -89,11 +89,8 @@ class PlantDataset(Dataset):
     def get_label(self, image_path):
         plant_type, disease_type = None, None
         path_splits= image_path.split('/')
-
-        if self.is_test:
-            plant_type, disease_type = path_splits[-4], path_splits[-3]
-        else:
-            plant_type, disease_type = path_splits[-3], path_splits[-2]
+        plant_type, disease_type = path_splits[-3], path_splits[-2]
+        
         return plant_type, disease_type
 
 
@@ -127,7 +124,9 @@ class PlantDataset(Dataset):
 if __name__ == "__main__":
     import os
 
-    dataset = PlantDataset('./testmee', is_test=True)
+    TRAIN_PATH = '/deepstore/datasets/dmb/ComputerVision/biology/train-V'
+    TEST_PATH = '/deepstore/datasets/dmb/ComputerVision/biology/testmee'
+    dataset = PlantDataset(TEST_PATH, is_test=True)
     os.system('clear')
 
     print(f'Length of Dataset: {len(dataset)}')
