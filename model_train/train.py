@@ -4,6 +4,8 @@ from models.Resent_model import Resnet
 from Dataset.dataloader import PlantDataLoader
 from Dataset.dataset_obj import PlantDataset
 from sklearn.metrics import f1_score
+import logging
+import traceback
 
 
 def train_one_epoch(model, dataloader, optimizer, loss_fn, device):
@@ -160,30 +162,41 @@ def train(model, train_loader, val_loader, optimizer, loss_fn, device, epochs= 1
     torch.save(state_obj, "training_state.pt")
     
 
+logging.basicConfig(
+    filename="training.log",
+    level = logging.INFO,
+    format= "%(asctime)s - %(levelnames)s - %(message)s"
+)
 
 if __name__ == "__main__":
+    try:
+        ROOT_PATH ='/deepstore/datasets/dmb/ComputerVision/biology'
+        TRAIN_PATH = os.path.join(ROOT_PATH, 'train-V')
+        VAL_PATH = os.path.join(ROOT_PATH, 'test-V')
+        TEST_PATH = os.path.join(ROOT_PATH, 'testing7')
 
+        print(TRAIN_PATH, VAL_PATH, TEST_PATH, sep='\n')
+        
+        dataset = PlantDataset(TRAIN_PATH, is_test=False)
+        dataloader = PlantDataLoader(dataset, batch_size=4, random=True)
 
-    ROOT_PATH ='/deepstore/datasets/dmb/ComputerVision/biology'
-    TRAIN_PATH = os.path.join(ROOT_PATH, 'train-V')
-    VAL_PATH = os.path.join(ROOT_PATH, 'test-V')
-    TEST_PATH = os.path.join(ROOT_PATH, 'testing7')
+        val_dataset = PlantDataset(VAL_PATH, is_test=False)
+        val_dataloader = PlantDataLoader(val_dataset, batch_size=4)
 
-    print(TRAIN_PATH, VAL_PATH, TEST_PATH, sep='\n')
-    
-    dataset = PlantDataset(TRAIN_PATH, is_test=False)
-    dataloader = PlantDataLoader(dataset, batch_size=4, random=True)
+        num_plants, num_diseases = len(dataset.crop_types), len(dataset.disease_types)
 
-    val_dataset = PlantDataset(VAL_PATH, is_test=False)
-    val_dataloader = PlantDataLoader(val_dataset, batch_size=4)
+        model = Resnet(num_plants, num_diseases)
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        model = model.to(device)
 
-    num_plants, num_diseases = len(dataset.crop_types), len(dataset.disease_types)
+        optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+        loss_fn = torch.nn.CrossEntropyLoss()
 
-    model = Resnet(num_plants, num_diseases)
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = model.to(device)
+        train( model, dataloader, val_dataloader, optimizer, loss_fn, device, epochs=1)
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
-    loss_fn = torch.nn.CrossEntropyLoss()
+    except Exception as log_error:
+        logging.error("Training failed")
+        logging.error(traceback.format_exc())
 
-    train( model, dataloader, val_dataloader, optimizer, loss_fn, device, epochs=1)
+        print('Error occurred. Check training.log')
+        raise
