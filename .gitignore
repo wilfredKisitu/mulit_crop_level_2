@@ -1,0 +1,7 @@
+train-V
+.ipynb_checkpoints
+__pycache__
+*.pyc
+testmee
+train-V
+test.ipynb
