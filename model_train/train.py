@@ -181,7 +181,12 @@ if __name__ == "__main__":
         dataset = PlantDataset(TRAIN_PATH, is_test=False)
         dataloader = PlantDataLoader(dataset, batch_size=BATACH_SIZE, random=True)
 
-        val_dataset = PlantDataset(VAL_PATH, is_test=False)
+        global_crop_types = dataset.crop_types
+        global_disease_types = dataset.disease_types
+
+        val_dataset = PlantDataset(VAL_PATH, is_test=False, crop_types=global_crop_types, disease_types=global_disease_types)
+        
+
         val_dataloader = PlantDataLoader(val_dataset, batch_size=BATACH_SIZE)
 
         num_plants, num_diseases = len(dataset.crop_types), len(dataset.disease_types)
@@ -193,7 +198,7 @@ if __name__ == "__main__":
         optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
         loss_fn = torch.nn.CrossEntropyLoss()
 
-        train( model, dataloader, val_dataloader, optimizer, loss_fn, device, epochs=1)
+        train( model, dataloader, val_dataloader, optimizer, loss_fn, device, epochs=20)
 
     except Exception as log_error:
         logging.error("Training failed")

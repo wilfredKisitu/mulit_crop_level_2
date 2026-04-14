@@ -24,13 +24,22 @@ class Dataset(ABC):
 class PlantDataset(Dataset):
     """Loads the plant dataset and performs transformation on the data"""
 
-    def __init__(self, root_path, is_test = False):
+    def __init__(self, root_path, is_test = False, crop_types = None, disease_types= None):
         self.root_path = root_path
         self.images = []
         self.is_test = is_test
-        self.crop_types = []
-        self.disease_types = []
         self._load_directories()
+
+        if crop_types is None and disease_types is None:
+            self.crop_types = sorted(self.crop_types)
+            self.disease_types = sorted(self.disease_types)
+        else:
+            self.crop_types = crop_types
+            self.disease_types = disease_types
+        
+        self.crop_to_idx = {c: i for i, c in enumerate(self.crop_types)}
+        self.disease_to_idx = {d: i for i, d in enumerate(self.disease_types)}
+
         self._get_crop_disease_dict()
         self._get_disease_per_crop_count()
 
@@ -38,6 +47,9 @@ class PlantDataset(Dataset):
 
     def _load_directories(self):
         """Loads the train dataset by directory iteration"""
+        self.crop_types = []
+        self.disease_types = []
+
         for plant in os.listdir(self.root_path):
             plant_dir = os.path.join(self.root_path, plant)
 
@@ -48,10 +60,12 @@ class PlantDataset(Dataset):
                     if self.is_test:
                         for sub_f in os.listdir(img_dir):
                             sub_f_dir = os.path.join(img_dir, sub_f)
-                    self.images.append(img_dir if not self.is_test else sub_f_dir)
-
-                    # computes and loads the disease
-                    plant_type, disease_type = self.get_label(img_dir if not self.is_test else sub_f_dir)
+                            self.images.append(sub_f_dir)
+                            plant_type, disease_type = self.get_label(sub_f_dir)
+                    else:
+                        self.images.append(img_dir)
+                        plant_type, disease_type = self.get_label(img_dir)
+    
                     if plant_type not in self.crop_types:
                         self.crop_types.append(plant_type)
                     if disease_type not in self.disease_types:
@@ -114,9 +128,14 @@ class PlantDataset(Dataset):
         ])
         
         img_tensor = transform(image)
-        return img_tensor, torch.tensor(self.crop_types.index(plant_type), dtype=torch.long),\
-              torch.tensor(self.disease_types.index(disease_type), dtype=torch.long)
+        crop_label = self.crop_to_idx[plant_type]
+        disease_label = self.disease_to_idx[disease_type]
 
+        return (
+            img_tensor, 
+            torch.tensor(crop_label, dtype=torch.long),
+            torch.tensor(disease_label, dtype=torch.long)
+        )
 
 
 
@@ -133,6 +152,20 @@ if __name__ == "__main__":
     num_of_crops = len(dataset.crop_types)
     num_of_diseases = len(dataset.disease_types)
 
+    print(f'Image shape: {x.shape}')
+    print(f'Plant type: {y_c}')
+    print(f'Disease category: {y_d}')
+    print(f'Num of crops: {num_of_crops}')
+    print(f'Number of diseases: {num_of_diseases}')
+    print(f"=="*50)
+
+    crop_types = dataset.crop_types
+    disease_types = dataset.disease_types
+    dataset = PlantDataset(TEST_PATH, is_test=True, crop_types=crop_types, disease_types=disease_types)
+    x, y_c, y_d = dataset[20]
+    num_of_crops = len(dataset.crop_types)
+    num_of_diseases = len(dataset.disease_types)
+
 
     print(f'Image shape: {x.shape}')
     print(f'Plant type: {y_c}')
@@ -142,8 +175,8 @@ if __name__ == "__main__":
     print(f"=="*50)
     # print(f'Disease per crop count: \n {dataset.get_disease_per_crop()}')
     # print(f'Diseases per crop: {dataset.get_disease_per_crop_count()}')
-    print(f'Crops:\n {dataset.crop_types}')
-    print(f'Diseases: \n {dataset.disease_types}')
+    # print(f'Crops:\n {dataset.crop_types}')
+    # print(f'Diseases: \n {dataset.disease_types}')
 
 
 
