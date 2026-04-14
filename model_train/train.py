@@ -178,10 +178,10 @@ if __name__ == "__main__":
         print(TRAIN_PATH, VAL_PATH, TEST_PATH, sep='\n')
         
         dataset = PlantDataset(TRAIN_PATH, is_test=False)
-        dataloader = PlantDataLoader(dataset, batch_size=4, random=True)
+        dataloader = PlantDataLoader(dataset, batch_size=128, random=True)
 
         val_dataset = PlantDataset(VAL_PATH, is_test=False)
-        val_dataloader = PlantDataLoader(val_dataset, batch_size=4)
+        val_dataloader = PlantDataLoader(val_dataset, batch_size=128)
 
         num_plants, num_diseases = len(dataset.crop_types), len(dataset.disease_types)
 
