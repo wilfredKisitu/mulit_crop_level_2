@@ -29,13 +29,13 @@ def train_one_epoch(model, dataloader, optimizer, loss_fn, device):
         plant_label = plant_label.to(device)
         disease_label = disease_label.to(device)
 
+        optimizer.zero_grad()
         plant_logits, disease_logits = model(images)
         loss_plant = loss_fn(plant_logits, plant_label)
         loss_disease = loss_fn(disease_logits, disease_label)
 
         loss  = loss_plant + loss_disease
 
-        optimizer.zero_grad()
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
@@ -118,16 +118,14 @@ def validate(model, dataloader, loss_fn, device):
     return avg_loss, plant_acc, disease_acc, plant_f1, disease_f1
 
 
-def train(model, train_loader, val_loader, optimizer, loss_fn, device, epochs= 10):
+def train(model, train_loader, val_loader, optimizer, loss_fn, device, epochs=10):
     """Combines the training loop"""
-    os.system('clear')
 
     state_obj = {}
     best_val_loss = float('inf')
 
     for epoch in range(epochs):
         train_loss, train_plant_acc, train_disease_acc, train_plant_f1, train_disease_f1 = train_one_epoch(model, train_loader, optimizer, loss_fn, device)
-        
 
         val_loss, val_plant_acc, val_disease_acc, val_plant_f1, val_disease_f1 = validate(model, val_loader, loss_fn, device)
 
@@ -146,48 +144,52 @@ def train(model, train_loader, val_loader, optimizer, loss_fn, device, epochs= 1
 
         if val_loss < best_val_loss:
             best_val_loss = val_loss
-            
+
             torch.save({
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
                 'val_loss': val_loss
             }, 'best_model.pt')
-            
-        
+
         print(f"Epoch {epoch+1}/{epochs}")
         print(f"Train Loss: {train_loss:.4f} | Train Plant Acc: {train_plant_acc:.4f} | Train Disease acc: {train_disease_acc:.4f}")
-        print(f"Val Loss: {val_loss:.4f} | Val Plan Acc: {val_plant_acc:.4f} | Val Disease Acc: {val_disease_acc:.4f}")
+        print(f"Val Loss: {val_loss:.4f} | Val Plant Acc: {val_plant_acc:.4f} | Val Disease Acc: {val_disease_acc:.4f}")
         print("-"*50)
 
-    torch.save(state_obj, "training_state.pt")
-    
+        logging.info(
+            f"Epoch {epoch+1}/{epochs} | "
+            f"Train Loss: {train_loss:.4f} | Train Plant Acc: {train_plant_acc:.4f} | Train Disease Acc: {train_disease_acc:.4f} | "
+            f"Val Loss: {val_loss:.4f} | Val Plant Acc: {val_plant_acc:.4f} | Val Disease Acc: {val_disease_acc:.4f}"
+        )
 
-logging.basicConfig(
-    filename="training.log",
-    level = logging.INFO,
-    format= "%(asctime)s - %(levelname)s - %(message)s"
-)
+    torch.save(state_obj, "training_state.pt")
+
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        filename="training.log",
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s"
+    )
+
     try:
-        ROOT_PATH ='/deepstore/datasets/dmb/ComputerVision/biology'
+        ROOT_PATH = '/deepstore/datasets/dmb/ComputerVision/biology'
         TRAIN_PATH = os.path.join(ROOT_PATH, 'train-V')
         VAL_PATH = os.path.join(ROOT_PATH, 'test-V')
         TEST_PATH = os.path.join(ROOT_PATH, 'testing7')
-        BATACH_SIZE = 64
+        BATCH_SIZE = 64
 
         print(TRAIN_PATH, VAL_PATH, TEST_PATH, sep='\n')
-        
+
         dataset = PlantDataset(TRAIN_PATH)
-        dataloader = PlantDataLoader(dataset, batch_size=BATACH_SIZE, random=True)
+        dataloader = PlantDataLoader(dataset, batch_size=BATCH_SIZE, random=True)
 
         global_crop_types = dataset.crop_types
         global_disease_types = dataset.disease_types
 
-        val_dataset = PlantDataset(VAL_PATH, crop_types=global_crop_types, disease_types=global_disease_types)
-        
+        val_dataset = PlantDataset(VAL_PATH, crop_types=global_crop_types, disease_types=global_disease_types, is_train=False)
 
-        val_dataloader = PlantDataLoader(val_dataset, batch_size=BATACH_SIZE)
+        val_dataloader = PlantDataLoader(val_dataset, batch_size=BATCH_SIZE)
 
         num_plants, num_diseases = len(dataset.crop_types), len(dataset.disease_types)
 
@@ -198,7 +200,7 @@ if __name__ == "__main__":
         optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
         loss_fn = torch.nn.CrossEntropyLoss()
 
-        train( model, dataloader, val_dataloader, optimizer, loss_fn, device, epochs=20)
+        train(model, dataloader, val_dataloader, optimizer, loss_fn, device, epochs=20)
 
     except Exception as log_error:
         logging.error("Training failed")
@@ -206,5 +208,3 @@ if __name__ == "__main__":
 
         print('Error occurred. Check training.log')
         raise
-
-# UPDATE THE MODEL TO 100 EPOCHS

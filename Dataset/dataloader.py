@@ -30,7 +30,7 @@ class PlantDataLoader(DataLoader):
     def __iter__(self):
         indices = np.arange(len(self.dataset))
         if self.random:
-            random.shuffle(indices)
+            np.random.shuffle(indices)
 
         for i in range(0, len(self.dataset), self.batch_size):
             selected_indices = indices[ i: i + self.batch_size]
@@ -58,7 +58,7 @@ if __name__ == '__main__':
     from Dataset.dataset_obj import PlantDataset
     import os
 
-    dataset = PlantDataset('./train-V', is_test=False)
+    dataset = PlantDataset('./train-V')
     dataloader  =PlantDataLoader(dataset, batch_size=64, random=True)
 
     data_iter = iter(dataloader)

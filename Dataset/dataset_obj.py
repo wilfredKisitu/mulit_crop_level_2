@@ -24,7 +24,7 @@ class Dataset(ABC):
 class PlantDataset(Dataset):
     """Loads the plant dataset and performs transformation on the data"""
 
-    def __init__(self, root_path, crop_types = None, disease_types= None):
+    def __init__(self, root_path, crop_types=None, disease_types=None, is_train=True):
         self.root_path = root_path
         self.images = []
         self._load_directories()
@@ -35,12 +35,27 @@ class PlantDataset(Dataset):
         else:
             self.crop_types = crop_types
             self.disease_types = disease_types
-        
+
         self.crop_to_idx = {c: i for i, c in enumerate(self.crop_types)}
         self.disease_to_idx = {d: i for i, d in enumerate(self.disease_types)}
 
         self._get_crop_disease_dict()
         self._get_disease_per_crop_count()
+
+        if is_train:
+            self.transform = transforms.Compose([
+                transforms.Resize((224, 224)),
+                transforms.RandomHorizontalFlip(),
+                transforms.RandomVerticalFlip(),
+                transforms.ToTensor(),
+                transforms.Normalize(_IMAGENET_MEAN, _IMAGENET_STD)
+            ])
+        else:
+            self.transform = transforms.Compose([
+                transforms.Resize((224, 224)),
+                transforms.ToTensor(),
+                transforms.Normalize(_IMAGENET_MEAN, _IMAGENET_STD)
+            ])
 
         
 
@@ -112,15 +127,7 @@ class PlantDataset(Dataset):
         plant_type, disease_type = self.get_label(image_path)
         image = Image.open(image_path).convert("RGB")
 
-        transform = transforms.Compose([
-            transforms.Resize((224, 224)),
-            transforms.RandomHorizontalFlip(),
-            transforms.RandomVerticalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize(_IMAGENET_MEAN, _IMAGENET_STD)
-        ])
-        
-        img_tensor = transform(image)
+        img_tensor = self.transform(image)
         crop_label = self.crop_to_idx[plant_type]
         disease_label = self.disease_to_idx[disease_type]
 

@@ -24,7 +24,7 @@ if __name__ == '__main__':
     from Dataset.dataset_obj import PlantDataset
     from configs.project_dirs import TRAIN_PATH
 
-    dataset = PlantDataset(TRAIN_PATH, is_test=False)
+    dataset = PlantDataset(TRAIN_PATH)
     num_plants = len(dataset.crop_types)
     num_diseases = len(dataset.disease_types)
     
