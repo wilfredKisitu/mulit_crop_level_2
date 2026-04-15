@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 from models.disease_heads import DiseaseHeads
 
@@ -21,10 +22,24 @@ class HierarchicalModel(nn.Module):
             8: "tomato"
         }
 
-    def forward(self, x):
+    def forward(self, x, use_gt_plant= None):
         features = self.backbone(x)
         plant_logits = self.plant_head(features)
-        return plant_logits, features
+
+        if use_gt_plant is not None:
+            plant_idx = use_gt_plant
+        else:
+            plant_idx = torch.argmax(plant_logits, dim=1)
+        
+        plant_name = [self.plant_idx_to_name[i.item()] for i in plant_idx]
+        disease_logits = []
+        
+        for i, name in enumerate(plant_name):
+            logits = self.disease_heads(features[i].unsqueeze(0), name)
+            disease_logits.append(logits)
+        disease_logits = torch.cat(disease_logits, dim=0)
+
+        return plant_logits, disease_logits, features
 
 
 if __name__ == "__main__":
@@ -53,7 +68,7 @@ if __name__ == "__main__":
 
     batch_size = 4
     x = torch.randn(batch_size, 3, 224, 224)
-    plant_logits, features = model(x)
+    plant_logits, disease_logits, features = model(x)
 
     feature_dim = 512
 

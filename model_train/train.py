@@ -30,7 +30,7 @@ def train_one_epoch(model, dataloader, optimizer, loss_fn, device):
         disease_label = disease_label.to(device)
 
         optimizer.zero_grad()
-        plant_logits, disease_logits = model(images)
+        plant_logits, disease_logits, _ = model(images)
         loss_plant = loss_fn(plant_logits, plant_label)
         loss_disease = loss_fn(disease_logits, disease_label)
 
@@ -87,7 +87,7 @@ def validate(model, dataloader, loss_fn, device):
             plant_labels = plant_labels.to(device)
             disease_labels = disease_labels.to(device)
 
-            plant_logit, disease_logits = model(images)
+            plant_logit, disease_logits, _ = model(images)
 
             loss_plant = loss_fn(plant_logit, plant_labels)
             loss_disease = loss_fn(disease_logits, disease_labels)
