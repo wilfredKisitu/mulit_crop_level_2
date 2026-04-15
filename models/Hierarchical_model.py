@@ -74,6 +74,7 @@ if __name__ == "__main__":
 
     print(f'Features shaped:  {features.shape}, expected shape: ({batch_size}, {feature_dim})')
     print(f'Plant logits shape: {plant_logits.shape}, expected shape: ({batch_size}, {num_plants})')
+    print(f'Shape of the plant_logits: {plant_logits.shape}')
     
 
     print(f'Supported crops: \n {crops}')
