@@ -86,7 +86,6 @@ class PlantDataset(Dataset):
             crop_disease_dict[crop] = list()
         
         for disease in self.disease_types:
-            disease = disease.lower()
             _crop_index = self.crop_types.index(disease.split('_')[0])
             _crop_key = self.crop_types[_crop_index]
             crop_disease_dict[_crop_key].append(disease)
