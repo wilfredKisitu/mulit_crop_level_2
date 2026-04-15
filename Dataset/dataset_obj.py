@@ -108,10 +108,8 @@ class PlantDataset(Dataset):
         
 
     def get_label(self, image_path):
-        plant_type, disease_type = None, None
-        path_splits= image_path.split('/')
-        plant_type, disease_type = path_splits[-3], path_splits[-2]
-        
+        path_splits = image_path.split('/')
+        plant_type, disease_type = path_splits[-3].lower(), path_splits[-2].lower()
         return plant_type, disease_type
 
 
