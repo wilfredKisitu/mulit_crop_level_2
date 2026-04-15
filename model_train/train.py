@@ -178,13 +178,13 @@ if __name__ == "__main__":
 
         print(TRAIN_PATH, VAL_PATH, TEST_PATH, sep='\n')
         
-        dataset = PlantDataset(TRAIN_PATH, is_test=False)
+        dataset = PlantDataset(TRAIN_PATH)
         dataloader = PlantDataLoader(dataset, batch_size=BATACH_SIZE, random=True)
 
         global_crop_types = dataset.crop_types
         global_disease_types = dataset.disease_types
 
-        val_dataset = PlantDataset(VAL_PATH, is_test=False, crop_types=global_crop_types, disease_types=global_disease_types)
+        val_dataset = PlantDataset(VAL_PATH, crop_types=global_crop_types, disease_types=global_disease_types)
         
 
         val_dataloader = PlantDataLoader(val_dataset, batch_size=BATACH_SIZE)

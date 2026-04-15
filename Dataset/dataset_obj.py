@@ -24,10 +24,9 @@ class Dataset(ABC):
 class PlantDataset(Dataset):
     """Loads the plant dataset and performs transformation on the data"""
 
-    def __init__(self, root_path, is_test = False, crop_types = None, disease_types= None):
+    def __init__(self, root_path, crop_types = None, disease_types= None):
         self.root_path = root_path
         self.images = []
-        self.is_test = is_test
         self._load_directories()
 
         if crop_types is None and disease_types is None:
@@ -57,15 +56,9 @@ class PlantDataset(Dataset):
                 cat_dir = os.path.join(plant_dir, cat)
                 for img in os.listdir(cat_dir):
                     img_dir = os.path.join(cat_dir, img)
-                    if self.is_test:
-                        for sub_f in os.listdir(img_dir):
-                            sub_f_dir = os.path.join(img_dir, sub_f)
-                            self.images.append(sub_f_dir)
-                            plant_type, disease_type = self.get_label(sub_f_dir)
-                    else:
-                        self.images.append(img_dir)
-                        plant_type, disease_type = self.get_label(img_dir)
-    
+                    self.images.append(img_dir)
+                    plant_type, disease_type = self.get_label(img_dir)
+
                     if plant_type not in self.crop_types:
                         self.crop_types.append(plant_type)
                     if disease_type not in self.disease_types:
@@ -144,7 +137,7 @@ if __name__ == "__main__":
     import os
     from configs.project_dirs import TRAIN_PATH, TEST_PATH
     
-    dataset = PlantDataset(TRAIN_PATH, is_test=False)
+    dataset = PlantDataset(TRAIN_PATH)
     os.system('clear')
 
     print(f'Length of Dataset: {len(dataset)}')
@@ -157,27 +150,8 @@ if __name__ == "__main__":
     print(f'Disease category: {y_d}')
     print(f'Num of crops: {num_of_crops}')
     print(f'Number of diseases: {num_of_diseases}')
-    print(f"=="*50)
 
-    crop_types = dataset.crop_types
-    disease_types = dataset.disease_types
-    dataset = PlantDataset(TEST_PATH, is_test=True, crop_types=crop_types, disease_types=disease_types)
-    x, y_c, y_d = dataset[20]
-    num_of_crops = len(dataset.crop_types)
-    num_of_diseases = len(dataset.disease_types)
-
-
-    print(f'Image shape: {x.shape}')
-    print(f'Plant type: {y_c}')
-    print(f'Disease category: {y_d}')
-    print(f'Num of crops: {num_of_crops}')
-    print(f'Number of diseases: {num_of_diseases}')
-    print(f"=="*50)
-    # print(f'Disease per crop count: \n {dataset.get_disease_per_crop()}')
-    # print(f'Diseases per crop: {dataset.get_disease_per_crop_count()}')
-    # print(f'Crops:\n {dataset.crop_types}')
-    # print(f'Diseases: \n {dataset.disease_types}')
-
+    
 
 
 
