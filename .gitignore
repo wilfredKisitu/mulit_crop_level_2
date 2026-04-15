@@ -6,3 +6,4 @@ testmee
 train-V
 test.ipynb
 tests/*
+*.pt
