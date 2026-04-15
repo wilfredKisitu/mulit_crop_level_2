@@ -200,7 +200,7 @@ if __name__ == "__main__":
         optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
         loss_fn = torch.nn.CrossEntropyLoss()
 
-        train(model, dataloader, val_dataloader, optimizer, loss_fn, device, epochs=20)
+        train(model, dataloader, val_dataloader, optimizer, loss_fn, device, epochs=2)
 
     except Exception as log_error:
         logging.error("Training failed")
