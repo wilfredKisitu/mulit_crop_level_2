@@ -4,7 +4,7 @@ from models.Resent_model import Resnet
 from Dataset.dataloader import PlantDataLoader
 from Dataset.dataset_obj import PlantDataset
 from model_train.train import validate
-from configs.project_dirs import TRAIN_PATH
+from configs.project_dirs import TRAIN_PATH, TEST_PATH
 
 
 BATCH_SIZE = 64
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     state_obj = {}
 
     for split in TEST_SPLITS:
-        test_path = os.path.join(ROOT_PATH, split)
+        test_path = os.path.join(TEST_PATH, split)
         valid_paths = filter_valid_paths(test_path, crop_types, disease_types)
         test_dataset = PlantDataset(test_path, crop_types=crop_types, disease_types=disease_types, is_train=False, image_paths=valid_paths)
         test_loader = PlantDataLoader(test_dataset, batch_size=BATCH_SIZE)
