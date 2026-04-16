@@ -24,10 +24,15 @@ class Dataset(ABC):
 class PlantDataset(Dataset):
     """Loads the plant dataset and performs transformation on the data"""
 
-    def __init__(self, root_path, crop_types=None, disease_types=None, is_train=True):
+    def __init__(self, root_path, crop_types=None, disease_types=None, is_train=True, image_paths=None):
         self.root_path = root_path
         self.images = []
-        self._load_directories()
+        if image_paths is not None:
+            self.images = image_paths
+            self.crop_types = []
+            self.disease_types = []
+        else:
+            self._load_directories()
 
         if crop_types is None and disease_types is None:
             self.crop_types = sorted(self.crop_types)
