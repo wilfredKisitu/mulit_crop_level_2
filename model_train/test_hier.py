@@ -35,7 +35,7 @@ loss_fn = torch.nn.CrossEntropyLoss()
 state_obj = {}
 
 for split in TEST_SPLITS:
-    test_path = os.path.join(TEST_SPLITS, split)
+    test_path = os.path.join(TEST_PATH, split)
     valid_paths = filter_valid_paths(test_path, crop_types, disease_types)
     test_dataset = PlantDataset(test_path, crop_types=crop_types, disease_types=disease_types, is_train=False, image_paths=valid_paths)
     test_loader = PlantDataLoader(test_dataset, batch_size=BATCH_SIZE)
