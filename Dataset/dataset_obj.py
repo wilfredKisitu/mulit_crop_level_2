@@ -127,7 +127,11 @@ class PlantDataset(Dataset):
 
         image_path = self.images[key]
         plant_type, disease_type = self.get_label(image_path)
-        image = Image.open(image_path).convert("RGB")
+        try:
+            image = Image.open(image_path).convert("RGB")
+        except Exception as e:
+            print(f"[WARN] Failed to load image: {image_path} — {e}")
+            return self.__getitem__((key + 1) % len(self))
 
         img_tensor = self.transform(image)
         crop_label = self.crop_to_idx[plant_type]
