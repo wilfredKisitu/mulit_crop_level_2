@@ -6,7 +6,7 @@ from Dataset.dataloader import PlantDataLoader
 from Dataset.dataset_obj import PlantDataset
 from model_train.train_hier import validate, build_disease_local_idx_map
 from model_train.test import filter_valid_paths, ROOT_PATH, TEST_SPLITS, BATCH_SIZE
-from configs.project_dirs import TRAIN_PATH
+from configs.project_dirs import TRAIN_PATH, TEST_PATH
 
 
 CHECKPOINT = 'best_hier_model.pt'
@@ -35,7 +35,7 @@ loss_fn = torch.nn.CrossEntropyLoss()
 state_obj = {}
 
 for split in TEST_SPLITS:
-    test_path = os.path.join(ROOT_PATH, split)
+    test_path = os.path.join(TEST_PATH, split)
     valid_paths = filter_valid_paths(test_path, crop_types, disease_types)
     test_dataset = PlantDataset(test_path, crop_types=crop_types, disease_types=disease_types, is_train=False, image_paths=valid_paths)
     test_loader = PlantDataLoader(test_dataset, batch_size=BATCH_SIZE)
