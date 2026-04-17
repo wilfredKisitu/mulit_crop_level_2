@@ -26,6 +26,11 @@ Based on the predicted plant, the features are routed to a plant-specific diseas
 
 This design ensures that disease predictions are conditioned on the plant type, leading to more biologically consistent outputs.
 
+### Results
+
+![Flat Model Results](./flat_model_results_for_20_epochs.png)
+![Hierarchical Model Results](./hier_model_results_for_20_epochs.png)
+
 ### Key Findings
 
 The experiments reveal several important insights:
