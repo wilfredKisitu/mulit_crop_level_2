@@ -13,6 +13,8 @@ tests/*
 *.npy
 *.npz
 *.png
+!flat_model_results_for_20_epochs.png
+!hier_model_results_for_20_epochs.png
 *.jpg
 *.jpeg
 *.gif
