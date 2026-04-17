@@ -28,21 +28,23 @@ This design ensures that disease predictions are conditioned on the plant type, 
 
 ### Results
 
-### Flat Model Results
+#### Flat Model Results
 
 ![Flat Model Results](./flat_modelpeformance_for_20_epochs.png)
 
-### Hierarchical Model Results
+#### Hierarchical Model Results
 
 ![Hierarchical Model Results](./hierarchical_model_performance_for_20_epochs.png)
 
 ### Test Datasets
 
-### Flat Model test results
+The datasets used for testing are collected using different protocols especially testB which includes images extracted from the internet
+
+#### Flat Model test results
 
 ![Flat model test results](./flat_model_results.png)
 
-### Hier Model test results
+#### Hier Model test results
 
 ![Hierarchical test results](./hier_model_results.png)
 
