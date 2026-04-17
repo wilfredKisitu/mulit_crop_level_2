@@ -17,6 +17,8 @@ tests/*
 !hier_model_results_for_20_epochs.png
 !flat_modelpeformance_for_20_epochs.png
 !hierarchical_model_performance_for_20_epochs.png
+!flat_model_results.png
+!hier_model_results.png
 *.jpg
 *.jpeg
 *.gif
