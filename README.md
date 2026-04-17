@@ -28,8 +28,8 @@ This design ensures that disease predictions are conditioned on the plant type, 
 
 ### Results
 
-![Flat Model Results](./flat_model_results_for_20_epochs.png)
-![Hierarchical Model Results](./hier_model_results_for_20_epochs.png)
+![Flat Model Results](./flat_model_performance_for_20_epochs.png)
+![Hierarchical Model Results](./hierarchical_model_performance_for_20_epochs.png)
 
 ### Key Findings
 
