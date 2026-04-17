@@ -36,6 +36,16 @@ This design ensures that disease predictions are conditioned on the plant type, 
 
 ![Hierarchical Model Results](./hierarchical_model_performance_for_20_epochs.png)
 
+### Test Datasets
+
+### Flat Model test results
+
+![Flat model test results](./flat_model_results.png)
+
+### Hier Model test results
+
+![Hierarchical test results](./hier_model_results.png)
+
 ### Key Findings
 
 The experiments reveal several important insights:
